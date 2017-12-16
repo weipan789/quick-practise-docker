@@ -1,1 +1,55 @@
-# quick-practise-docker
+* quick-practise-docker
+* FROM指定基础镜像
+一个Dockerfile中FROM是必备的指令,并且必须是第一条指令。
+- 在DockerStore上有非常多的高质量的官方镜像,有可以直接拿来使用的服务类的镜像,如nginx	 、redis 、mongo 、mysql 、httpd 、php 、tomcat等;也有一些方便开发、构建、运行各种语言应用的镜像,如node 、openjdk 、python 、ruby 、golang等。可以在其中寻找一个最符合我们最终目标的镜像为基础镜像进行定制。
+- 如果没有找到对应服务的镜像,官方镜像中还提供了一些更为基础的操作系统镜像,如ubuntu 、debian 、centos 、fedora 、alpine等,这些操作系统的软件库为我们提供了更广阔的扩展空间。
+- 除了选择现有镜像为基础镜像外,Docker还存在一个特殊的镜像,名为scratch。这个镜像是虚拟的概念,并不实际存在,它表示一个空白的镜像。
+* 构建镜像
+#+BEGIN_SRC 
+docker	build	-t	nginx:v3	.x
+#+END_SRC
+结果
+#+BEGIN_SRC 
+Sending build context to Docker daemon 61.95 kB
+Step 1/2 : FROM nginx
+ ---> f895b3fb9e30
+Step 2/2 : RUN echo '<h1>Hello, Docker!</h1>' > /usr/share/nginx/html/index.html
+ ---> Running in 916109d695dc
+ ---> 80c4ad25fc7e
+Removing intermediate container 916109d695dc
+Successfully built 80c4ad25fc7e
+
+#+END_SRC
+如果目录下有些东西确实不希望构建时传给Docker引擎,那么可以用.gitignore一样的语法写一个.dockerignore,该文件是用于剔除不需要作为上下文传递给 Docker 引擎的。
+
+** 直接用 Git repo 进行构建
+或许你已经注意到了,  docker build   还支持从 URL 构建,比如可以直接从 Git repo 中构建:
+#+BEGIN_SRC 
+docker build git@github.com:weipan789/quick-practise-docker.git
+Sending build context to Docker daemon 48.64 kB
+Step 1/2 : FROM nginx
+ ---> f895b3fb9e30
+Step 2/2 : RUN echo	'<h1>Hello,	Docker!</h1>'	>	/usr/share/nginx/html/index.html
+ ---> Running in 2737051d61ea
+ ---> 9f9253803f02
+Removing intermediate container 2737051d61ea
+Successfully built 9f9253803f02
+#+END_SRC
+
+** 用给定的 tar 压缩包构建
+#+BEGIN_SRC 
+docker build http://server/context.tar.gz
+#+END_SRC
+** 从标准输入中读取 Dockerfile 进行构建
+#+BEGIN_SRC 
+docker build - < Dockerfile
+#+END_SRC
+#+BEGIN_SRC 
+cat Dockerfile | docker build -
+#+END_SRC
+** 从标准输入中读取上下文压缩包进行构建
+#+BEGIN_SRC 
+docker build - < context.tar.gz
+#+END_SRC
+
+
