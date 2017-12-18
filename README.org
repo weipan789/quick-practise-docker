@@ -6,7 +6,7 @@
 - 除了选择现有镜像为基础镜像外,Docker还存在一个特殊的镜像,名为scratch。这个镜像是虚拟的概念,并不实际存在,它表示一个空白的镜像。
 * 构建镜像
 #+BEGIN_SRC 
-docker	build	-t	nginx:v3	.x
+docker	build	-t	nginx:v3 .
 #+END_SRC
 结果
 #+BEGIN_SRC 
@@ -52,4 +52,29 @@ cat Dockerfile | docker build -
 docker build - < context.tar.gz
 #+END_SRC
 
-
+* 启动
+#+BEGIN_SRC 
+docker volume create my-vol
+docker	run	-d	-p	80:80	--mount	source=my-vol,target=/webapp	--name	webserver	nginx
+docker	run	-d	-p	80:80	-v my-vol:/webapp	--name	webserver	nginx
+docker inspect webserver
+#+END_SRC
+* 挂载一个主机目录作为数据卷
+#+BEGIN_SRC 
+docker	run	-d	-p	80:80	-v /home/wp/Documents/webapp:/webapp	--name	webserver	nginx
+docker inspect webserver
+docker exec -i webserver bash #使用伪终端和bash
+#+END_SRC
+* 挂载一个本地主机文件作为数据卷
+* 查看日志
+#+BEGIN_SRC 
+docker logs -f webserver
+#+END_SRC
+* 停止
+#+BEGIN_SRC 
+docker stop webserver
+#+END_SRC
+* 删除
+#+BEGIN_SRC 
+docker rm webserver
+#+END_SRC
